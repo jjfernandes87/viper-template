@@ -1,0 +1,48 @@
+#!/bin/bash
+
+scriptPath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+# Variables & Functions
+#===============================================================================
+header="" # Print header title
+
+print_header() {
+  echo .
+  echo =====================
+  printf "$header\n"
+  echo =====================
+  echo .
+}
+
+setup_rake() {
+  header="Setup Rake"; print_header;
+  rake --version
+  if [[ $? != 0 ]] ; then
+  	echo "Rake not found. Starting installation..."
+  	gem install rake
+  	echo "Rake installed. Version:"; rake --version
+  else
+  	gem update rake
+  	echo "Rake updated. Version:"; rake --version
+  fi
+}
+
+setup_xcodegen() {
+  header="Setup Xcodegen"; print_header;
+  xcodegen --version
+  if [[ $? != 0 ]] ; then
+  	echo "Xcodegen not found. Starting installation..."
+  	brew install xcodegen
+  	echo "Xcodegen installed. Version:"; xcodegen --version
+  else
+  	brew upgrade xcodegen
+  	echo "Xcodegen updated. Version:"; xcodegen --version
+  fi
+}
+
+#===============================================================================
+# main()
+#===============================================================================
+header="Starting tools setup"; print_header
+setup_rake
+setup_xcodegen

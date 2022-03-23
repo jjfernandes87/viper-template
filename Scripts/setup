@@ -1,0 +1,103 @@
+#!/bin/bash
+
+# Script path
+scriptPath="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+# Helper funcs
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#check if a received path exists, if it doesn't show error and stop script
+foundPath() {
+	pathToCheck="$1"
+	if [ -d  $pathToCheck ]; then
+		true
+	else
+		echo "Couldn't find path: $pathToCheck" && exit 0
+		false
+	fi
+}
+
+# Go to root
+goToMainPath() {
+    cd $scriptPath
+    cd ..
+}
+
+# remove files
+removeCurrentFiles() {
+    find ./ -name "*.DS_Store" -exec rm -rf {} \;
+    find ./ -name "*.lock" -exec rm -rf {} \;
+    find ./ -name "*.xcodeproj" -exec rm -rf {} \;
+    find ./ -name "*.xcworkspace" -exec rm -rf {} \;
+    find ./ -name "Pods" -exec rm -rf {} \;
+}
+
+# pod install
+podInstall() {
+    bundle exec pod install
+}
+
+# create project
+createProject() {
+    goToMainPath
+    echo .
+    echo ============================================================================
+    echo Preparing "SampleApp" workspace
+    echo "Project path: $PWD"
+    echo ============================================================================
+    echo .
+	xcodegen generate
+    echo .
+    echo ============================================================================
+    echo "SampleApp" Pod Install
+    echo ============================================================================
+    echo .
+    podInstall
+    echo .
+    echo ============================================================================
+    echo "SampleApp".xcworkspace created
+    echo ============================================================================
+    echo .
+    open SampleApp.xcworkspace
+    
+}
+
+#check if a received path exists, if it doesn't show error and stop script
+foundPath() {
+	pathToCheck="$1"
+	if [ -d  $pathToCheck ]; then
+		true
+	else
+		echo "Couldn't find path: $pathToCheck" && exit 0
+		false
+	fi
+}
+
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# Start setup
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Script for sync templates, generate projects and install dependencies.
+echo .
+echo ============================================================================
+echo Starting setup
+echo "Script path: $scriptPath"
+echo ============================================================================
+echo .
+
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# Remove current project files
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+echo .
+echo ============================================================================
+echo Removing current project files
+echo ============================================================================
+echo .
+goToMainPath
+
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# # Create Projects
+# #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+removeCurrentFiles
+createProject
